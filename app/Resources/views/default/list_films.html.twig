@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>coucou les loulous</h1>
+
+<ul>
+    {% for film in films %}
+        <li>
+            <h3>{{ film.titre }}</h3>
+        </li>
+    {% endfor %}
+
+</ul>
+{# <h2>{{ films }}</h2> #}
+{% endblock %}
+
+{% block stylesheets %}
+
+{% endblock %}
+

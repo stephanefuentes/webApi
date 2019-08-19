@@ -1,0 +1,47 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Genre
+ *
+ * @ORM\Table(name="genre", uniqueConstraints={@ORM\UniqueConstraint(name="UNIQ_835033F86C6E55B5", columns={"nom"})})
+ * @ORM\Entity
+ */
+class Genre
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="nom", type="string", length=50, nullable=false)
+     */
+    private $nom;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Film", mappedBy="genre")
+     */
+    private $film;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->film = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+}
+

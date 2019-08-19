@@ -1,0 +1,101 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Film
+ *
+ * @ORM\Table(name="film")
+ * @ORM\Entity
+ */
+class Film
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="titre", type="string", length=255, nullable=false)
+     */
+    private $titre;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateSortie", type="date", nullable=false)
+     */
+    private $datesortie;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="text", nullable=false)
+     */
+    private $description;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Acteur", inversedBy="film")
+     * @ORM\JoinTable(name="films_acteurs",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="film_id", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="acteur_id", referencedColumnName="id")
+     *   }
+     * )
+     */
+    private $acteur;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Genre", inversedBy="film")
+     * @ORM\JoinTable(name="films_genres",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="film_id", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="genre_id", referencedColumnName="id")
+     *   }
+     * )
+     */
+    private $genre;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Realisateur", inversedBy="film")
+     * @ORM\JoinTable(name="films_realisateurs",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="film_id", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="realisateur_id", referencedColumnName="id")
+     *   }
+     * )
+     */
+    private $realisateur;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->acteur = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->genre = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->realisateur = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+}
+

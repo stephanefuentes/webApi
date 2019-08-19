@@ -1,0 +1,8 @@
+app:
+    resource: '@AppBundle/Controller/'
+    type: annotation
+
+api.get.films:
+    path:       /api/films
+    defaults: { _controller: AppBundle:Default:getFilms }
+    methods:    [GET]
