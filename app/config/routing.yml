@@ -6,3 +6,13 @@ api.get.films:
     path:       /api/films
     defaults: { _controller: AppBundle:Default:getFilms }
     methods:    [GET]
+
+api.get.film:
+    path:       /api/film/{id}
+    defaults: { _controller: AppBundle:Default:getFilm }
+    methods:    [GET]
+
+api.delete.film:
+    path:       /api/film/{id}
+    defaults: { _controller: AppBundle:Default:deleteFilm }
+    methods:    [DELETE]

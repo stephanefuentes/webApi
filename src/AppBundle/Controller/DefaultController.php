@@ -49,6 +49,67 @@ class DefaultController extends Controller
     }
 
 
+    /**
+     * @Route("/api/film/{id}", name="api.get.film")
+     */
+    public function getFilmAction(Film $film)
+    {
+
+        $actors = [];
+
+        foreach ($film->getActeur() as $actor) {
+            $actors[] = ['nom' => $actor->getNom(), 'prenom' => $actor->getPrenom()];
+        }
+
+
+        // $film = $this->getDoctrine()->getRepository(Film::class)
+        //     ->createQueryBuilder('film')
+        //     ->select('film', 'acteur')
+        //     ->join('film.acteur', 'acteur')
+        //     ->where('film.id = :id')
+        //     ->setParameter('id', $film->getId())
+        //     ->getQuery()
+        //     ->getArrayResult();
+
+        // var_dump($film);
+
+        $film = [
+            "titre" => $film->getTitre(),
+            "description" => $film->getDescription(),
+            "datesortie" => $film->getDatesortie()->format('d/m/Y'),
+            "acteurs" => $actors,
+            "réalisateur" => $film->getRealisateur(),
+            "genre" => $film->getGenre()
+        ];
+
+        return new JsonResponse($film); // cette methode rajoute de façon implicite dans le header le fait que la reponse sera de type Json, et du coup, quand ajax va recuperer la reponse il va la parser automatiquement ..
+
+     
+        
+    }
+
+
+    
+    public function deleteFilmAction(Film $film)
+    {
+
+
+          try
+        {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($film);
+            $em->flush();
+             
+            return new JsonResponse([ 'success' => true ]);
+        }
+        catch( Exception $e )
+        {
+            return new JsonResponse([ 'success' => false ]);
+        }
+
+
+
+    }
 
 
 }
