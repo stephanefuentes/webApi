@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Film;
+use AppBundle\Entity\Acteur;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -74,6 +75,7 @@ class DefaultController extends Controller
         // var_dump($film);
 
         $film = [
+            "id" => $film->getId(),
             "titre" => $film->getTitre(),
             "description" => $film->getDescription(),
             "datesortie" => $film->getDatesortie()->format('d/m/Y'),
@@ -99,7 +101,7 @@ class DefaultController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->remove($film);
             $em->flush();
-             
+           
             return new JsonResponse([ 'success' => true ]);
         }
         catch( Exception $e )
@@ -111,5 +113,68 @@ class DefaultController extends Controller
 
     }
 
+
+
+    /**
+     * @Route("/api/actors", name="api.get.actors")
+     */
+    public function getActorsAction()
+    {
+
+
+        $actors = $this->getDoctrine()->getRepository(Acteur::class)
+            ->createQueryBuilder('a')
+            ->select('a')
+            ->getQuery()
+            ->getArrayResult();// obtient un tableau assossioctif au lieu d'une Entité
+
+       
+        return new JsonResponse($actors); // cette methode rajoute de façon implicite dans le header le fait que la reponse sera de type Json, et du coup, quand ajax va recuperer la reponse il va la parser automatiquement ..
+
+
+
+    }
+
+
+    /**
+     * @Route("/api/film", name="api.post.film")
+     */
+    public function postFilmAction(Request $request)
+    {
+        
+        //  Garde
+        if (
+            empty($request->request->get('title'))
+            || empty($request->request->get('description'))
+            || empty($request->request->get('date'))
+        ) {
+            return new JsonResponse(['success' => false]);
+        }
+
+        $film = new Film();
+
+        $film->setTitre($request->request->get('title'));
+        $film->setDescription($request->request->get('description'));
+        $film->setDatesortie(new \DateTime($request->request->get('date')));
+
+        if (empty($request->request->get('actors')) == false) {
+            $actors = $request->request->get('actors'); // tableau d'id d'acteur
+
+            foreach ($actors as $id) {
+                $actor = $this->getDoctrine()->getRepository(Acteur::class)->find($id);
+                $film->addActeur($actor);
+            }
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($film);
+        $em->flush();
+
+        return new JsonResponse(['success' => true]);// cette methode rajoute de façon implicite dans le header le fait que la reponse sera de type Json, et du coup, quand ajax va recuperer la reponse il va la parser automatiquement ..
+
+
+
+
+    }
 
 }

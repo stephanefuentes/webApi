@@ -16,3 +16,13 @@ api.delete.film:
     path:       /api/film/{id}
     defaults: { _controller: AppBundle:Default:deleteFilm }
     methods:    [DELETE]
+
+api.get.actors:
+    path:       /api/actors
+    defaults: { _controller: AppBundle:Default:getActors }
+    methods:    [GET]
+
+api.post.film:
+    path:       /api/film
+    defaults: { _controller: AppBundle:Default:postFilm }
+    methods:    [POST]
