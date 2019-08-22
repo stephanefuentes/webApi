@@ -26,3 +26,8 @@ api.post.film:
     path:       /api/film
     defaults: { _controller: AppBundle:Default:postFilm }
     methods:    [POST]
+
+api.update.film:
+    path:       /api/film/{id}
+    defaults: { _controller: AppBundle:Default:updateFilm }
+    methods:    [PUT]

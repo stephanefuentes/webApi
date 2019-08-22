@@ -36,11 +36,15 @@ class DefaultController extends Controller
             ->createQueryBuilder('f')
             ->select('f')
             ->getQuery()
-            ->getArrayResult();// obtient un tableau assossioctif au lieu d'une Entité
+            ->getArrayResult(); // obtient un tableau assossioctif au lieu d'une Entité
 
-            //var_dump($films);
+        //var_dump($films);
 
-        return new JsonResponse($films);// cette methode rajoute de façon implicite dans le header le fait que la reponse sera de type Json, et du coup, quand ajax va recuperer la reponse il va la parser automatiquement ..
+        $response =  new JsonResponse($films); // cette methode rajoute de façon implicite dans le header le fait que la reponse sera de type Json, et du coup, quand ajax va recuperer la reponse il va la parser automatiquement ..
+
+                            // cette entete rend accesssible cette route de toute les origine 
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        return $response;
 
         // replace this example code with whatever you need
         return $this->render('default/list_films.html.twig', [
@@ -59,7 +63,7 @@ class DefaultController extends Controller
         $actors = [];
 
         foreach ($film->getActeur() as $actor) {
-            $actors[] = ['nom' => $actor->getNom(), 'prenom' => $actor->getPrenom()];
+            $actors[] = ['id' => $actor->getId(), 'nom' => $actor->getNom(), 'prenom' => $actor->getPrenom()];
         }
 
 
@@ -176,5 +180,45 @@ class DefaultController extends Controller
 
 
     }
+
+
+    public function updateFilmAction(Request $request, Film $film)
+    {
+        if (
+            empty($request->request->get('title'))
+            || empty($request->request->get('description'))
+            || empty($request->request->get('date'))
+        ) {
+            return new JsonResponse(['success' => false]);
+        }
+
+        $film->setTitre($request->request->get('title'));
+        $film->setDescription($request->request->get('description'));
+        $film->setDatesortie(new \DateTime($request->request->get('date')));
+
+        if (empty($request->request->get('actors')) == false) {
+            $actors = $request->request->get('actors'); // tableau d'id d'acteur
+
+            $film->emptyActeur();
+
+            $this->setActors($actors, $film);
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($film);
+        $em->flush();
+
+        return new JsonResponse(['success' => true]);
+    }
+
+    private function setActors($actorsId, $film)
+    {
+        foreach ($actorsId as $id) {
+            $actor = $this->getDoctrine()->getRepository(Acteur::class)->find($id);
+            $film->addActeur($actor);
+        }
+    }
+
+
 
 }
